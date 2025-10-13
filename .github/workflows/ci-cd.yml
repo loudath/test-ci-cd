@@ -13,9 +13,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       
-      - name: Step 1
-        run: echo "step 1 done!" 
-      
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
@@ -27,9 +24,19 @@ jobs:
       - name: Build application
         run: go build -o myapp ./...
 
-      - name: Snyk Code Scan (SAST)
+      - name: Install Snyk
         uses: snyk/actions/setup@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: code test --severity-threshold=low
+          snyk-version: latest
+
+      - name: Run Snyk SAST scan
+        run: snyk code test --severity-threshold=low
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Run Snyk dependency scan
+        run: snyk test --severity-threshold=low
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
