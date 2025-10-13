@@ -31,5 +31,4 @@ jobs:
         uses: snyk/actions@v1.0.0
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: test --all-projects
+    
