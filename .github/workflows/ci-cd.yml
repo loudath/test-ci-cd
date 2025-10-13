@@ -33,3 +33,10 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:        
           args: --severity-threshold=low
+      
+      - name: Snyk Code Scan (SAST)
+        uses: snyk/actions/setup@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+        args: code test --severity-threshold=low  
