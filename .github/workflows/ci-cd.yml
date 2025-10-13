@@ -1,25 +1,46 @@
-name: test cicd pipeline
+name: Secure CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
 
 jobs:
-  buildAndTest:
+  build-test-secure:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.24'
 
+      - name: Run Go Linter
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+
       - name: Run tests
-        run: go test -v ./...
+        run: go test -v -coverprofile=coverage.out ./...
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.out
 
       - name: Build application
         run: go build -o myapp ./...
@@ -31,12 +52,43 @@ jobs:
         with:
           snyk-version: latest
 
-      - name: Run Snyk SAST scan
+      - name: Run Snyk Code Scan
         run: snyk code test --severity-threshold=low
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: Run Snyk dependency scan
+      - name: Run Snyk Dependency Scan
         run: snyk test --severity-threshold=low
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      # Secret scanning with Gitleaks
+      - name: Run Gitleaks for secrets
+        uses: zricethezav/gitleaks-action@v2
+        with:
+          args: detect --source . --no-git --redact
+
+      - name: Build Docker image
+        run: docker build -t myapp:${{ github.sha }} .
+
+      # image with Trivy
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: myapp:${{ github.sha }}
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          ignore-unfixed: true
+
+      # (run container)
+      - name: Run Docker container to test startup
+        run: |
+          docker run --rm myapp:${{ github.sha }}
+
+      #Upload binary artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: myapp-binary
+          path: ./myapp
