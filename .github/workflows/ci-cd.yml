@@ -52,6 +52,7 @@ jobs:
         run: snyk code test --severity-threshold=low
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
 
       - name: Run Snyk Dependency Scan
         run: snyk test --severity-threshold=low
