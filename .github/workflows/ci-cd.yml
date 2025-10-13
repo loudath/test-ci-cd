@@ -28,7 +28,7 @@ jobs:
         run: go build -o myapp ./...
 
       - name: Snyk scan
-        uses: snyk/actions
+        uses: snyk/actions@v1.0.0
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
