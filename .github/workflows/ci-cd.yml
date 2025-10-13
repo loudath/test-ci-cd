@@ -1,7 +1,9 @@
 name: test cicd pipeline
 
 on:
-  push: ["main"]
+  push:
+    branches:
+      - main
 
 jobs:
   buildAndTest:
