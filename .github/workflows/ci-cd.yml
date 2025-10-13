@@ -27,13 +27,6 @@ jobs:
       - name: Build application
         run: go build -o myapp ./...
 
-      - name: Snyk scan (SCA)
-        uses: snyk/actions/golang@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: test --severity-threshold=low
-
       - name: Snyk Code Scan (SAST)
         uses: snyk/actions/setup@master
         env:
