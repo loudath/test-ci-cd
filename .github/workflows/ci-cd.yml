@@ -28,3 +28,10 @@ jobs:
 
       - name: build application
         run: go build -o myapp ./...
+
+      - name: snyk scan
+        uses: snyk/actions/go@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: test
