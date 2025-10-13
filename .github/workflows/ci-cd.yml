@@ -16,3 +16,15 @@ jobs:
       - name: step 1
         run: | 
           echo "step 1 done!" 
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+
+      - name: run tests
+        run: go test -v ./...
+
+
+      - name: build application
+        run: go build -o myapp ./...
