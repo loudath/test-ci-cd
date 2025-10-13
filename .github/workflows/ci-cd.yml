@@ -1,0 +1,16 @@
+name: test cicd pipeline
+
+on:
+  push: ["main"]
+
+jobs:
+  buildAndTest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: step 1
+        run: | 
+          echo "step 1 done!" 
