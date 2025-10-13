@@ -9,7 +9,7 @@ import (
 
 const (
 	// Hard-coded secret (SNYK / linters should flag hard-coded credentials)
-	HARDCODED_API_KEY = "AKIAINVALIDTHIS_SHOULD_BE_SECRET"
+	AIRTABLE_API_KEY = "keyzKsyH5g8z3LXa3rE1YxAbCdEfGHiJ"
 )
 
 // Add sums two integers
@@ -48,7 +48,7 @@ func main() {
 	fmt.Printf("MD5 hash (insecure): %s\n", hashWithMD5(pwd))
 
 	// --- Hard-coded secret usage (insecure) ---
-	fmt.Printf("Using API key (hard-coded): %s\n", HARDCODED_API_KEY)
+	fmt.Printf("Using API key (hard-coded): %s\n", AIRTABLE_API_KEY)
 
 	// --- Command injection example ---
 	fmt.Println("Enter a shell command to run (DANGEROUS - for test only):")
